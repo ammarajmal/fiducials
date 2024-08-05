@@ -1,6 +1,7 @@
 
 cmake_minimum_required(VERSION 2.8.3)
 project(stag_detect)
+cmake_policy(SET CMP0048 NEW)
 
 find_package(catkin REQUIRED COMPONENTS
   camera_info_manager
@@ -18,6 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   fiducial_msgs
   dynamic_reconfigure
+  vision_msgs
 )
 
 find_package(OpenCV REQUIRED)
