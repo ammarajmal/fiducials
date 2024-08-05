@@ -1,0 +1,36 @@
+<launch>
+    <arg name="launch_nuc" default="sony_cam1" />
+    <arg name="fiducial_len" default="0.02"/>
+    <arg name="dictionary" default="0"/>
+    
+    <group if = "$(eval launch_nuc == 'sony_cam0')">
+        <include file="$(find aruco_detect)/launch/aruco_detect.launch">
+        <arg name="camera" value="$(arg launch_nuc)" />
+        </include>
+    </group>
+    <group if = "$(eval launch_nuc == 'sony_cam1')">
+        <include file="$(find aruco_detect)/launch/aruco_detect.launch">
+        <arg name="camera" value="$(arg launch_nuc)" />
+        </include>
+    </group>
+    <group if = "$(eval launch_nuc == 'sony_cam2')">
+        <include file="$(find aruco_detect)/launch/aruco_detect.launch">
+        <arg name="camera" value="$(arg launch_nuc)" />
+        </include>
+    </group>
+    <group if = "$(eval launch_nuc == 'sony_cam3')">
+        <include file="$(find aruco_detect)/launch/aruco_detect.launch">
+        <arg name="camera" value="$(arg launch_nuc)" />
+        </include>
+    </group>
+    <group if = "$(eval launch_nuc == 'sony_cam4')">
+        <include file="$(find aruco_detect)/launch/aruco_detect.launch">
+        <arg name="camera" value="$(arg launch_nuc)" />
+        </include>
+    </group>
+    <group if = "$(eval launch_nuc == 'sony_cam5')">
+        <include file="$(find aruco_detect)/launch/aruco_detect.launch">
+        <arg name="camera" value="$(arg launch_nuc)" />
+        </include>
+    </group>
+</launch>
