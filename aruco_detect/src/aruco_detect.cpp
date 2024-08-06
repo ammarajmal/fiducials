@@ -664,9 +664,9 @@ FiducialsNode::FiducialsNode() : nh(), pnh("~"), it(nh)
     vertices_pub = nh.advertise<fiducial_msgs::FiducialArray>("fiducial_vertices", 1);
 
     if (vis_msgs)
-        pose_pub = nh.advertise<vision_msgs::Detection2DArray>("fiducial_transforms", 1);
+        pose_pub = pnh.advertise<vision_msgs::Detection2DArray>("fiducial_transforms", 1);
     else        
-        pose_pub = nh.advertise<fiducial_msgs::FiducialTransformArray>("fiducial_transforms", 1);
+        pose_pub = pnh.advertise<fiducial_msgs::FiducialTransformArray>("fiducial_transforms", 1);
 
     dictionary = aruco::getPredefinedDictionary(dicno);
 
