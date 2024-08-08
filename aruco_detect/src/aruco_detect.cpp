@@ -268,6 +268,7 @@ void FiducialsNode::configCallback(aruco_detect::DetectorParamsConfig & config, 
     detectorParams->cornerRefinementMaxIterations = config.cornerRefinementMaxIterations;
     detectorParams->cornerRefinementMinAccuracy = config.cornerRefinementMinAccuracy;
     detectorParams->cornerRefinementWinSize = config.cornerRefinementWinSize;
+
 #if CV_MINOR_VERSION==2 and CV_MAJOR_VERSION==3
     detectorParams->doCornerRefinement = config.doCornerRefinement;
 #else
@@ -283,6 +284,7 @@ void FiducialsNode::configCallback(aruco_detect::DetectorParamsConfig & config, 
        detectorParams->cornerRefinementMethod = aruco::CORNER_REFINE_NONE;
     }
 #endif
+
     detectorParams->errorCorrectionRate = config.errorCorrectionRate;
     detectorParams->minCornerDistanceRate = config.minCornerDistanceRate;
     detectorParams->markerBorderBits = config.markerBorderBits;
@@ -296,6 +298,7 @@ void FiducialsNode::configCallback(aruco_detect::DetectorParamsConfig & config, 
     detectorParams->perspectiveRemovePixelPerCell = config.perspectiveRemovePixelPerCell;
     detectorParams->polygonalApproxAccuracyRate = config.polygonalApproxAccuracyRate;
 }
+
 
 void FiducialsNode::ignoreCallback(const std_msgs::String& msg)
 {
@@ -619,6 +622,8 @@ FiducialsNode::FiducialsNode() : nh(), pnh("~"), it(pnh)
     pnh.param<bool>("publish_fiducial_tf", publishFiducialTf, true);
     pnh.param<bool>("vis_msgs", vis_msgs, false);
     pnh.param<bool>("verbose", verbose, false);
+    // Set subpixel corner refinement method
+    detectorParams->cornerRefinementMethod = aruco::CORNER_REFINE_SUBPIX;
 
     std::string str;
     std::vector<std::string> strs;
