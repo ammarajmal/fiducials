@@ -336,7 +336,7 @@ void FiducialsNode::imageCallback(const sensor_msgs::ImageConstPtr & msg)
     }
 
     if(verbose){
-        ROS_INFO("Got image %d", msg->header.seq);       
+        ROS_INFO("Got image %d", msg->header.seq);
     }
 
     fiducial_msgs::FiducialArray fva;
@@ -391,6 +391,12 @@ void FiducialsNode::imageCallback(const sensor_msgs::ImageConstPtr & msg)
     }
     catch(cv::Exception & e) {
         ROS_ERROR("cv exception: %s", e.what());
+    }
+    catch (const std::exception & e) {
+        ROS_ERROR("std exception: %s", e.what());
+    }
+    catch (...) {
+        ROS_ERROR("unhandled exception");
     }
 }
 
