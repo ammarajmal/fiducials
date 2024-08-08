@@ -17,8 +17,8 @@
   <!-- <arg name="pose_file" default="/home/ammar/sitl_ws/data/pose_data/pose_$(arg experiment_name).csv"/> -->
 
 
-  <node pkg="aruco_detect" name="$(arg camera)_detect"
-    type="aruco_detect" output="screen" respawn="false">
+  <node pkg="aruco_detect" name="aruco_detect_node"
+    type="aruco_detect" output="screen" respawn="false" ns="$(arg camera)" >
     <param name="image_transport" value="$(arg transport)"/>
     <param name="publish_images" value="true" />
     <param name="fiducial_len" value="$(arg fiducial_len)"/>
@@ -31,8 +31,8 @@
     <param name="experiment_name" value="$(arg experiment_name)"/>
     <!-- <param name="duration_in_seconds" value="$(arg duration_in_seconds)"/>
     <param name="pose_file" value="$(arg pose_file)"/> -->
-    <remap from="camera" to="$(arg camera)/image_raw"/>
-    <remap from="camera_info" to="$(arg camera)/camera_info"/>
+    <remap from="camera" to="image_raw"/>
+    <remap from="camera_info" to="camera_info"/>
   </node>
 
 </launch>

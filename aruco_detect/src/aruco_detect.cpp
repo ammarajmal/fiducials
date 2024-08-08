@@ -594,7 +594,7 @@ bool FiducialsNode::enableDetectionsCallback(std_srvs::SetBool::Request &req,
 }
 
 
-FiducialsNode::FiducialsNode() : nh(), pnh("~"), it(nh)
+FiducialsNode::FiducialsNode() : nh(), pnh("~"), it(pnh)
 {
     frameNum = 0;
     prev_detected_count = -1;
@@ -665,9 +665,9 @@ FiducialsNode::FiducialsNode() : nh(), pnh("~"), it(nh)
         }
     }
 
-    image_pub = it.advertise("/fiducial_images", 1);
+    image_pub = it.advertise("fiducial_images", 1);
 
-    vertices_pub = nh.advertise<fiducial_msgs::FiducialArray>("fiducial_vertices", 1);
+    vertices_pub = pnh.advertise<fiducial_msgs::FiducialArray>("fiducial_vertices", 1);
 
     if (vis_msgs)
         pose_pub = pnh.advertise<vision_msgs::Detection2DArray>("fiducial_transforms", 1);
@@ -679,15 +679,15 @@ FiducialsNode::FiducialsNode() : nh(), pnh("~"), it(nh)
     img_sub = it.subscribe("camera", 1,
                         &FiducialsNode::imageCallback, this);
 
-    vertices_sub = nh.subscribe("fiducial_vertices", 1,
+    vertices_sub = pnh.subscribe("fiducial_vertices", 1,
                     &FiducialsNode::poseEstimateCallback, this);
     caminfo_sub = nh.subscribe("camera_info", 1,
                     &FiducialsNode::camInfoCallback, this);
 
-    ignore_sub = nh.subscribe("ignore_fiducials", 1,
+    ignore_sub = pnh.subscribe("ignore_fiducials", 1,
                               &FiducialsNode::ignoreCallback, this);
 
-    service_enable_detections = nh.advertiseService("enable_detections",
+    service_enable_detections = pnh.advertiseService("enable_detections",
                         &FiducialsNode::enableDetectionsCallback, this);
 
     callbackType = boost::bind(&FiducialsNode::configCallback, this, boost::placeholders::_1, boost::placeholders::_2);
