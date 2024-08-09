@@ -75,6 +75,8 @@ typedef boost::shared_ptr< fiducial_msgs::FiducialArray const> FiducialArrayCons
 
 class FiducialsNode {
   private:
+    tf2::Transform initialPose;
+    bool haveInitialPose;
     ros::Publisher vertices_pub;
     ros::Publisher pose_pub;
 
@@ -219,16 +221,6 @@ static double getReprojectionError(const vector<Point3f> &objectPoints,
     double rerror = totalError/(double)objectPoints.size();
     return rerror;
 }
-void FiducialsNode::refinePoseEstimation(const vector<Point3f>& objectPoints,
-                                         const vector<Point2f>& imagePoints,
-                                         const cv::Mat& cameraMatrix, const cv::Mat& distCoeffs,
-                                         cv::Vec3d& rvec, cv::Vec3d& tvec) {
-
-    // Refine the pose estimation using the inliers only
-    cv::solvePnP(objectPoints, imagePoints, cameraMatrix, distCoeffs,
-                 rvec, tvec, true, cv::SOLVEPNP_ITERATIVE);
-}
-
 
 void FiducialsNode::estimatePoseSingleMarkers(float markerLength,
                                 const cv::Mat &cameraMatrix,
@@ -254,23 +246,9 @@ void FiducialsNode::estimatePoseSingleMarkers(float markerLength,
        }
 
        getSingleMarkerObjectPoints(fiducialSize, markerObjPoints);
+       cv::solvePnP(markerObjPoints, corners[i], cameraMatrix, distCoeffs,
+                    rvecs[i], tvecs[i]);
 
-        // Initial pose estimation using solvePnPRansac
-       cv::Mat inliers;
-       cv::solvePnPRansac(markerObjPoints, corners[i], cameraMatrix, distCoeffs,
-                          rvecs[i], tvecs[i], false, 100, 8.0, 0.99, inliers);
-
-    //    cv::solvePnP(markerObjPoints, corners[i], cameraMatrix, distCoeffs,
-    //                 rvecs[i], tvecs[i]);
-    // Refine the pose estimation with inliers only
-       vector<Point2f> inlierCorners;
-       for (int idx : inliers) {
-           inlierCorners.push_back(corners[i][idx]);
-       }
-       refinePoseEstimation(markerObjPoints, inlierCorners, cameraMatrix, distCoeffs,
-                            rvecs[i], tvecs[i]);
-
-       // Reprojection error calculation (optional, for debugging)
        reprojectionError[i] =
           getReprojectionError(markerObjPoints, corners[i],
                                cameraMatrix, distCoeffs,
@@ -623,6 +601,7 @@ bool FiducialsNode::enableDetectionsCallback(std_srvs::SetBool::Request &req,
 
 FiducialsNode::FiducialsNode() : nh(), pnh("~"), it(pnh)
 {
+    haveInitialPose = false;
     frameNum = 0;
     prev_detected_count = -1;
 
@@ -727,7 +706,7 @@ FiducialsNode::FiducialsNode() : nh(), pnh("~"), it(pnh)
     pnh.param<int>("adaptiveThreshWinSizeMin", detectorParams->adaptiveThreshWinSizeMin, 3);
     pnh.param<int>("adaptiveThreshWinSizeStep", detectorParams->adaptiveThreshWinSizeStep, 4); /* default 10 */
     pnh.param<int>("cornerRefinementMaxIterations", detectorParams->cornerRefinementMaxIterations, 30);
-    pnh.param<double>("cornerRefinementMinAccuracy", detectorParams->cornerRefinementMinAccuracy, 0.001); /* default 0.1 */
+    pnh.param<double>("cornerRefinementMinAccuracy", detectorParams->cornerRefinementMinAccuracy, 0.01); /* default 0.1 */
     pnh.param<int>("cornerRefinementWinSize", detectorParams->cornerRefinementWinSize, 5);
 #if CV_MINOR_VERSION==2 and CV_MAJOR_VERSION==3
     pnh.param<bool>("doCornerRefinement",detectorParams->doCornerRefinement, true); /* default false */

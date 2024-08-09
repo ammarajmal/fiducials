@@ -75,8 +75,6 @@ typedef boost::shared_ptr< fiducial_msgs::FiducialArray const> FiducialArrayCons
 
 class FiducialsNode {
   private:
-    tf2::Transform initialPose;
-    bool haveInitialPose;
     ros::Publisher vertices_pub;
     ros::Publisher pose_pub;
 
@@ -601,7 +599,6 @@ bool FiducialsNode::enableDetectionsCallback(std_srvs::SetBool::Request &req,
 
 FiducialsNode::FiducialsNode() : nh(), pnh("~"), it(pnh)
 {
-    haveInitialPose = false;
     frameNum = 0;
     prev_detected_count = -1;
 
